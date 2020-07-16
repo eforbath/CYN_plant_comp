@@ -11,14 +11,29 @@ install.packages("rtiff")
 install.packages("raster") 
 install.packages("sp")
 install.packages("rgdal")
+install.packages("tidyr")
+install.packages("stringr")
+install.packages("lme4")
+install.packages("cowplot")
+install.packages("lsmeans")
+install.packages("DHARMa")
 
-library(dplyr)
-library(ggplot2)
 library(tiff)
 library(rtiff)
 library(raster)
 library(sp)
 library(rgdal)
+
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(stringr)
+library(lme4)
+library(cowplot)
+library(lme4)
+library(lsmeans)
+library(DHARMa)
+
 
 
 ########## Extracted NDVI Values #########
@@ -30,7 +45,7 @@ FL016b <- projectRaster(FL016, crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +n
 
 
 FL020 <- raster("CYN_TR1_FL020M/NDVI.data.tif")
-FL020b <- projectRaster(FL020, crs = "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs", 
+FL020b <- projectRaster(FL020, crs = "+proj=aea +lat_1=50 +lat_2=70 +lat_0=56 +lon_0=100 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0 ", 
                         method = "bilinear", 
                         alignOnly = FALSE)
 
@@ -41,9 +56,14 @@ GPS2 <- subset(GPS, select= -c(plot, elevation))
 ## re order columns so longitude is first
 GPS_order <- GPS2[,c("longitude", "latitude")]
 
+## set projection of coordinates
+proj4string(GPS_order) <- CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs")
+
 ## turn into spatial points
+CRS.new <- CRS("+proj=aea +lat_1=50 +lat_2=70 +lat_0=56 +lon_0=100 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0")
+GPS_order2 <- st_transform(GPS_order, CRS.new)
 GPS_order2 <- SpatialPoints(GPS_order,
-                            proj4string = CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"))
+                            proj4string = CRS("+proj=aea +lat_1=50 +lat_2=70 +lat_0=56 +lon_0=100 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0"))
 
 ## actually extract NDVI values from each flight 
 ndvi_FL016 <- extract(FL016b, GPS_order2,
@@ -132,6 +152,9 @@ equ <- subset(percent_cover, Functional.group == "EQU")
 
 ### does change in NDVI correlate with veg type (ie does NDVI inc/dec with specific veg types)
 pc_br <- merge(percent_cover, ndvi, by = c("plot")) ## merging percent cover with NDVI
+
+
+
 
 
 
