@@ -127,10 +127,12 @@ names(percent_cover2)[names(percent_cover2) == "x"] <- "percent_cover"
 
 ndvi_pc <- merge(ndvi, percent_cover2, by = "plot")
 
-## subset by treatment 
-pc_GR <- subset(ndvi_pc, Treatment == "GR")
-pc_SH <- subset(ndvi_pc, Treatment == "SH")
-pc_GS <- subset(ndvi_pc, Treatment == "G+S")
+
+## Read in Point Intercept Data## 
+pt_int<- na.omit(read.csv("pt_intercept.csv"))
+all <- merge(pt_int, ndvi_pc, by = "plot")
+
+
 
 ## merge ndvi data with pc data
 con <- subset(ndvi_pc, functional_group == "CON")
