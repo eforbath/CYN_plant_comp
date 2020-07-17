@@ -135,25 +135,48 @@ all <- merge(pt_int, ndvi_pc, by = "plot")
 
 
 ## merge ndvi data with pc data
-con <- subset(ndvi_pc, functional_group == "CON")
-evsh <- subset(ndvi_pc, functional_group == "EVSH")
-desh <- subset(ndvi_pc, functional_group == "DESH")
-gram <- subset(ndvi_pc, functional_group == "GRAM")
-forb <- subset(ndvi_pc, functional_group == "FORB")
-cwd <- subset(ndvi_pc, functional_group == "CWD")
-moss <- subset(ndvi_pc, functional_group == "MOSS")
-lichen <- subset(ndvi_pc, functional_group == "LICH")
-brg <- subset(ndvi_pc, functional_group == "BRG")
-litr <- subset(ndvi_pc, functional_group == "LITR")
-equ <- subset(ndvi_pc, functional_group == "EQU")
+con <- subset(all, functional_group == "CON")
+evsh <- subset(all, functional_group == "EVSH")
+desh <- subset(all, functional_group == "DESH")
+gram <- subset(all, functional_group == "GRAM")
+forb <- subset(all, functional_group == "FORB")
+cwd <- subset(all, functional_group == "CWD")
+moss <- subset(all, functional_group == "MOSS")
+lichen <- subset(all, functional_group == "LICH")
+brg <- subset(all, functional_group == "BRG")
+litr <- subset(all, functional_group == "LITR")
+equ <- subset(all, functional_group == "EQU")
 
 
 ### does change in NDVI correlate with veg type (ie does NDVI inc/dec with specific veg types)
 pc_br <- merge(percent_cover, ndvi, by = c("plot")) ## merging percent cover with NDVI
 
 
+### box plot of NDVIs for each functional group (one graph?) ###
+boxplot(percent_cover ~ functional_group, 
+        data = all, 
+        main = "Functional Group vs Percent Cover", 
+        xlab = "Functional Group", 
+        ylab = "Percent Cover")
+
+cbbPalette <- c("darkred","red","orange","yellow","lightgreen","green","blue",
+                "lightblue","purple", "pink","brown","black")
 
 
+ggplot(data = all, aes(x =functional_group , y = percent_cover, color = factor(functional_group))) +
+  geom_boxplot() +       
+  geom_point() +
+  scale_color_manual(values=cbbPalette) +
+  ylab("Percent Cover (pt intercept)") +
+  xlab("Functional Group")  +
+  theme_bw() + theme(legend.position = "bottom") +
+  theme(plot.margin = unit(c(t = 0.3, r = 0.1, b = 0.3, l = 0.1), "cm")) +
+  theme(axis.title.x = element_text(size = 11, hjust = 0.5, vjust = -0.1),
+        axis.title.y = element_text(size = 11, hjust = 0.5, vjust = 1.1),
+        axis.text.x = element_blank(),
+        axis.text.y = element_text(size = 10, color = "black"),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) + guides(color=guide_legend(override.aes=list(fill=NA), title = "Transect ID"))
 
 
 
