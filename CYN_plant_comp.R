@@ -126,36 +126,41 @@ ndvi_pc <- merge(ndvi, percent_cover2, by = "plot")  ## data frame with ndvi and
 pt_int<- na.omit(read.csv("pt_intercept.csv"))
 
 pt_int2<- merge(pt_int, ndvi, by = "plot")  ## data frame with ndvi and point intercept
-pt_int2 <- pt_int2[ ,c("plot", "longitude.x", "latitude.x", "elevation",
+pt_int2 <- pt_int2[ ,c("longitude.x", "latitude.x", "elevation",
                       "FL016_ndvi", "FL020_ndvi", "treatment", "functional_groups", 
                       "sum_hits", "percent_composition")]
 
-## pivot datafram (?)
+write.csv(pt_int2, "plant_comp.csv", row.names = FALSE)
+
+plant_comp <- subset(pt_int2, select= -c(longitude.x, latitude.x, elevation,
+                                          FL020_ndvi, treatment, sum_hits)) 
+
+
+## pivot dataframe (?)
 install.packages("tidyr")
 library(tidyr)
 
-plant_comp = func %>% 
-  pivot_wider(names_from = functional_groups, values_from = percent_composition)
+veg = plant_comp %>% 
+  dplyr::select(FL016_ndvi:percent_composition) %>% 
+  pivot_wider(names_from = functional_groups, 
+              values_from = percent_composition,
+              values_fill = 0)
 
-veg_piv
+veg
 
-names(plant_comp)
+names(veg)
 
-veg_var = veg_piv %>%
-  dplyr::select(plot, FL016_ndvi, CON:CWS)
+
+veg_var = veg %>%
+  dplyr::select(FL016_ndvi, CON:FORB)
 veg_var
+
 
 corr <- round(cor(veg_var), 1)
 corr
 
+ggcorrplot(corr)
 
-pivot_wider(func, 
-            names_from = functional_groups, 
-            values_from = percent_composition,
-            values_fill = 0)
-
-
-write.csv(pt_int2, "plant_comp.csv", row.names = FALSE)
 
 
 
@@ -213,9 +218,4 @@ install.packages("GGally")
 library(ggcorrplot)
 library(GGally)
 
-
-func <- subset(pt_int2, select= -c(plot, sum_hits, longitude.x, latitude.x, elevation, FL020_ndvi, treatment))
-
-corr <- ggcorr(func)
-corr
 
