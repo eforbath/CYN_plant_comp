@@ -126,7 +126,7 @@ ndvi_pc <- merge(ndvi, percent_cover2, by = "plot")  ## data frame with ndvi and
 pt_int<- na.omit(read.csv("pt_intercept.csv"))
 
 pt_int2<- merge(pt_int, ndvi, by = "plot")  ## data frame with ndvi and point intercept
-pt_int2 <- pt_int2[ ,c("longitude.x", "latitude.x", "elevation",
+pt_int2 <- pt_int2[ ,c("plot", "longitude.x", "latitude.x", "elevation",
                       "FL016_ndvi", "FL020_ndvi", "treatment", "functional_groups", 
                       "sum_hits", "percent_composition")]
 
@@ -136,12 +136,21 @@ plant_comp <- subset(pt_int2, select= -c(longitude.x, latitude.x, elevation,
                                           FL020_ndvi, treatment, sum_hits)) 
 
 
-## pivot dataframe (?)
+## pivot dataframe (?) and create correlation ##
+### correlation plots 
+install.packages("ggcorrplot")
+install.packages("GGally")
 install.packages("tidyr")
+
 library(tidyr)
+library(ggcorrplot)
+library(GGally)
+
+
+
 
 veg = plant_comp %>% 
-  dplyr::select(FL016_ndvi:percent_composition) %>% 
+  dplyr::select(plot:percent_composition) %>% 
   pivot_wider(names_from = functional_groups, 
               values_from = percent_composition,
               values_fill = 0)
@@ -152,7 +161,7 @@ names(veg)
 
 
 veg_var = veg %>%
-  dplyr::select(FL016_ndvi, CON:FORB)
+  dplyr::select(plot, FL016_ndvi, CON:FORB)
 veg_var
 
 
@@ -179,13 +188,12 @@ equ <- subset(ndvi_pc, functional_group == "EQU")
 
 
 
-### box plot of NDVIs for each functional group (one graph?) ###
+### box plot of NDVIs per treatment ###
 boxplot(FL016_ndvi ~ treatment, 
         data = ndvi_pc, 
         main = "NDVI vs Treatment", 
         xlab = "Treatment", 
         ylab = "NDVI")
-
 
 
 ### box plot with just distribution of NDVI
@@ -212,10 +220,20 @@ ggplot(data = pt_int2, aes(x ="" , y = FL016_ndvi, color = factor(""))) +
 
 
 
-### correlation plots 
-install.packages("ggcorrplot")
-install.packages("GGally")
-library(ggcorrplot)
-library(GGally)
+### boxplot of NDVi per treatment....looks a little funky
+ggplot(data = pt_int2, aes(x = "", y = FL016_ndvi, color = factor(treatment))) +
+  geom_boxplot() +       
+  geom_point() +
+  scale_color_manual(values=Palette2) +
+  ylab("NDVI") +
+  xlab("Cherskiy North")  +
+  theme_bw() + theme(legend.position = "bottom") +
+  theme(plot.margin = unit(c(t = 0.3, r = 0.1, b = 0.3, l = 0.1), "cm")) +
+  theme(axis.title.x = element_text(size = 11, hjust = 0.5, vjust = -0.1),
+        axis.title.y = element_text(size = 11, hjust = 0.5, vjust = 1.1),
+        axis.text.x = element_blank(),
+        axis.text.y = element_text(size = 10, color = "black"),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black")) + guides(color=guide_legend(override.aes=list(fill=NA), title = "Transect ID"))
 
 
