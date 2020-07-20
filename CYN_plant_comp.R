@@ -24,7 +24,6 @@ library(raster)
 library(sp)
 library(rgdal)
 
-library(tidyr)
 library(dplyr)
 library(ggplot2)
 library(stringr)
@@ -105,13 +104,6 @@ ndvi <- merge(ndvi_plots2, treatments, by = "plot")
 ndvi$plot = gsub("P", "", ndvi$plot)
 ndvi
 
-## plot by treatment (separate plots)
-## need this???
-ndvi_CT <- subset(ndvi, treatment == "CT")
-ndvi_GR <- subset(ndvi, treatment == "GR")
-ndvi_SH <- subset(ndvi, treatment == "SH")
-ndvi_GS <- subset(ndvi, treatment == "GS")
-
 
 ######### Read/Merge Percent Cover to Table ############
 percent_cover <- na.omit(read.csv("percent_cover.csv"))
@@ -125,50 +117,55 @@ names(percent_cover2)[names(percent_cover2) == "Group.1"] <- "plot"
 names(percent_cover2)[names(percent_cover2) == "Group.2"] <- "functional_group"
 names(percent_cover2)[names(percent_cover2) == "x"] <- "percent_cover"
 
-ndvi_pc <- merge(ndvi, percent_cover2, by = "plot")
+
+ndvi_pc <- merge(ndvi, percent_cover2, by = "plot")  ## data frame with ndvi and percent cover 
 
 
-## Read in Point Intercept Data## 
+
+######### Read in Point Intercept Data #########
 pt_int<- na.omit(read.csv("pt_intercept.csv"))
-all <- merge(pt_int, ndvi_pc, by = "plot")
+
+pt_int2<- merge(pt_int, ndvi, by = "plot")  ## data frame with ndvi and point intercept
 
 
 
-## merge ndvi data with pc data
-con <- subset(all, functional_group == "CON")
-evsh <- subset(all, functional_group == "EVSH")
-desh <- subset(all, functional_group == "DESH")
-gram <- subset(all, functional_group == "GRAM")
-forb <- subset(all, functional_group == "FORB")
-cwd <- subset(all, functional_group == "CWD")
-moss <- subset(all, functional_group == "MOSS")
-lichen <- subset(all, functional_group == "LICH")
-brg <- subset(all, functional_group == "BRG")
-litr <- subset(all, functional_group == "LITR")
-equ <- subset(all, functional_group == "EQU")
+## subset percent cover by functional group
+con <- subset(ndvi_pc, functional_group == "CON")
+evsh <- subset(ndvi_pc, functional_group == "EVSH")
+desh <- subset(ndvi_pc, functional_group == "DESH")
+gram <- subset(ndvi_pc, functional_group == "GRAM")
+forb <- subset(ndvi_pc, functional_group == "FORB")
+cwd <- subset(ndvi_pc, functional_group == "CWD")
+moss <- subset(ndvi_pc, functional_group == "MOSS")
+lichen <- subset(ndvi_pc, functional_group == "LICH")
+brg <- subset(ndvi_pc, functional_group == "BRG")
+litr <- subset(ndvi_pc, functional_group == "LITR")
+equ <- subset(ndvi_pc, functional_group == "EQU")
 
-
-### does change in NDVI correlate with veg type (ie does NDVI inc/dec with specific veg types)
-pc_br <- merge(percent_cover, ndvi, by = c("plot")) ## merging percent cover with NDVI
 
 
 ### box plot of NDVIs for each functional group (one graph?) ###
-boxplot(percent_cover ~ functional_group, 
-        data = all, 
-        main = "Functional Group vs Percent Cover", 
-        xlab = "Functional Group", 
-        ylab = "Percent Cover")
+boxplot(FL016_ndvi ~ treatment, 
+        data = ndvi_pc, 
+        main = "NDVI vs Treatment", 
+        xlab = "Treatment", 
+        ylab = "NDVI")
 
-cbbPalette <- c("darkred","red","orange","yellow","lightgreen","green","blue",
+
+
+### box plot with just distribution of NDVI
+
+Palette <- c("darkred","red","orange","yellow","lightgreen","green","blue",
                 "lightblue","purple", "pink","brown","black")
 
+Palette2 <-c("red", "orange", "yellow", "green") 
 
-ggplot(data = all, aes(x =functional_group , y = percent_cover, color = factor(functional_group))) +
+ggplot(data = ndvi_pc, aes(x ="" , y = FL016_ndvi, color = factor(""))) +
   geom_boxplot() +       
   geom_point() +
-  scale_color_manual(values=cbbPalette) +
-  ylab("Percent Cover (pt intercept)") +
-  xlab("Functional Group")  +
+  scale_color_manual(values=Palette) +
+  ylab("NDVI") +
+  xlab("Cherskiy North")  +
   theme_bw() + theme(legend.position = "bottom") +
   theme(plot.margin = unit(c(t = 0.3, r = 0.1, b = 0.3, l = 0.1), "cm")) +
   theme(axis.title.x = element_text(size = 11, hjust = 0.5, vjust = -0.1),
@@ -179,5 +176,8 @@ ggplot(data = all, aes(x =functional_group , y = percent_cover, color = factor(f
         axis.line = element_line(colour = "black")) + guides(color=guide_legend(override.aes=list(fill=NA), title = "Transect ID"))
 
 
+
+### correlation plots 
+corr <- round(cor(all),2)
 
 
