@@ -23,7 +23,6 @@ library(rtiff)
 library(raster)
 library(sp)
 library(rgdal)
-
 library(dplyr)
 library(ggplot2)
 library(stringr)
@@ -44,6 +43,8 @@ FL020 <- raster("CYN_TR1_FL020M/NDVI.data.tif")
 FL020b <- projectRaster(FL020, crs = "+proj=aea +lat_1=50 +lat_2=70 +lat_0=56 +lon_0=100 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0 ", 
                         method = "bilinear", 
                         alignOnly = FALSE)
+writeRaster(FL020b, "FL020b.tiff")
+FL020b <- raster("FL020b.tif")
 
 ##reading GPS coordinates
 GPS <- na.omit(read.csv("CYN_plot_centers.csv"))
@@ -93,7 +94,7 @@ ndvi_plots <- merge(ndvi, GPS, by = c("ID"))## add GPS points
 ndvi_plots2 <- subset(ndvi_plots, select= -c(longitude.y, latitude.y))
 
 ## rearrage column orders for ease of reading
-ndvi_plots2 <- ndvi_plots2[,c("plot", "longitude.x", "latitude.x", "elevation", "FL016_ndvi", "FL020_ndvi")]
+ndvi_plots2 <- ndvi_plots2[,c("plot", "longitude.x", "latitude.x", "elevation", "FL016_ndvi", "FL020b")]
 
 
 ########## Read/Merge Treatments to Table ###########
@@ -127,13 +128,13 @@ pt_int<- na.omit(read.csv("pt_intercept.csv"))
 
 pt_int2<- merge(pt_int, ndvi, by = "plot")  ## data frame with ndvi and point intercept
 pt_int2 <- pt_int2[ ,c("plot", "longitude.x", "latitude.x", "elevation",
-                      "FL016_ndvi", "FL020_ndvi", "treatment", "functional_groups", 
+                      "FL016_ndvi", "FL020b", "treatment", "functional_groups", 
                       "sum_hits", "percent_composition")]
 
 write.csv(pt_int2, "plant_comp.csv", row.names = FALSE)
 
 plant_comp <- subset(pt_int2, select= -c(longitude.x, latitude.x, elevation,
-                                          FL020_ndvi, treatment, sum_hits)) 
+                                          FL020b, treatment, sum_hits)) 
 
 
 ## pivot dataframe (?) and create correlation ##
