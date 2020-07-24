@@ -36,15 +36,12 @@ library(DHARMa)
 
 ########## Extracted NDVI Values #########
 ##projecting rasters
-FL016 <- raster("CYN_TR1_FL016M/RU_CYN_TR1_FL016B_index_ndvi.tif")
+FL016 <- raster("CYN_TR1_FL016M/FL016.tif")
+FL016
 
+FL020 <- raster("CYN_TR1_FL020M/FL020.tif")
+FL020
 
-FL020 <- raster("CYN_TR1_FL020M/NDVI.data.tif")
-FL020b <- projectRaster(FL020, crs = "+proj=aea +lat_1=50 +lat_2=70 +lat_0=56 +lon_0=100 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0 ", 
-                        method = "bilinear", 
-                        alignOnly = FALSE)
-writeRaster(FL020b, "FL020b.tiff")
-FL020b <- raster("FL020b.tif")
 
 ##reading GPS coordinates
 GPS <- na.omit(read.csv("CYN_plot_centers.csv"))
@@ -72,18 +69,18 @@ ndvi_FL016 <- extract(FL016, GPS_final,
                       df = TRUE,
                       along = TRUE, 
                       sp = TRUE)
-names(ndvi_FL016)[names(ndvi_FL016) == "RU_CYN_TR1_FL016B_index_ndvi"] <- "FL016_ndvi"
+names(ndvi_FL016)[names(ndvi_FL016) == "FL016"] <- "FL016_ndvi"
 ndvi_FL016b <- as.data.frame(ndvi_FL016)
 
 
-ndvi_FL020 <- extract(FL020b, 
+ndvi_FL020 <- extract(FL020, 
                       GPS_final,
                       buffer = 0.25,
                       fun = mean,
                       df = TRUE,
                       along = TRUE,
                       sp = TRUE)
-names(ndvi_FL020)[names(ndvi_FL020) == "NDVI.data"] <- "FL020_ndvi"
+names(ndvi_FL020)[names(ndvi_FL020) == "FL020"] <- "FL020_ndvi"
 ndvi_FL020b <- as.data.frame(ndvi_FL020)
 
 ## combine pre- and post-clipping data frames by lat and long
@@ -94,7 +91,7 @@ ndvi_plots <- merge(ndvi, GPS, by = c("ID"))## add GPS points
 ndvi_plots2 <- subset(ndvi_plots, select= -c(longitude.y, latitude.y))
 
 ## rearrage column orders for ease of reading
-ndvi_plots2 <- ndvi_plots2[,c("plot", "longitude.x", "latitude.x", "elevation", "FL016_ndvi", "FL020b")]
+ndvi_plots2 <- ndvi_plots2[,c("plot", "longitude.x", "latitude.x", "elevation", "FL016_ndvi", "FL020_ndvi")]
 
 
 ########## Read/Merge Treatments to Table ###########
@@ -128,13 +125,13 @@ pt_int<- na.omit(read.csv("pt_intercept.csv"))
 
 pt_int2<- merge(pt_int, ndvi, by = "plot")  ## data frame with ndvi and point intercept
 pt_int2 <- pt_int2[ ,c("plot", "longitude.x", "latitude.x", "elevation",
-                      "FL016_ndvi", "FL020b", "treatment", "functional_groups", 
+                      "FL016_ndvi", "FL020_ndvi", "treatment", "functional_groups", 
                       "sum_hits", "percent_composition")]
 
 write.csv(pt_int2, "plant_comp.csv", row.names = FALSE)
 
 plant_comp <- subset(pt_int2, select= -c(longitude.x, latitude.x, elevation,
-                                          FL020b, treatment, sum_hits)) 
+                                          FL020_ndvi, treatment, sum_hits)) 
 
 
 ## pivot dataframe (?) and create correlation ##
