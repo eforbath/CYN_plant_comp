@@ -35,12 +35,13 @@ library(DHARMa)
 
 
 ########## Extracted NDVI Values #########
-##projecting rasters
-FL016 <- raster("CYN_TR1_FL016M/FL016.tif")
+##reading rasters (created in CYN_NDVI)
+FL016 <- raster("CYN_TR1_FL016M/FL016.tif")  
 FL016
 
 FL020 <- raster("CYN_TR1_FL020M/FL020.tif")
 FL020
+
 
 
 ##reading GPS coordinates
@@ -59,6 +60,7 @@ GPS_order2 <- SpatialPoints(GPS_order,
                             proj4string = CRS("+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs"))
 CRS.new <- CRS("+proj=aea +lat_1=50 +lat_2=70 +lat_0=56 +lon_0=100 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0")
 GPS_final<- spTransform(GPS_order2, CRS.new)
+
 
 
 ## actually extract NDVI values from each flight 
@@ -92,6 +94,10 @@ ndvi_plots2 <- subset(ndvi_plots, select= -c(longitude.y, latitude.y))
 
 ## rearrage column orders for ease of reading
 ndvi_plots2 <- ndvi_plots2[,c("plot", "longitude.x", "latitude.x", "elevation", "FL016_ndvi", "FL020_ndvi")]
+
+##### export GPS coordinates with plots #####
+GPS_all <- ndvi_plots2[,c("plot", "longitude.x", "latitude.x", "elevation")]
+write.csv(GPS_all, "GPS_all.csv")
 
 
 ########## Read/Merge Treatments to Table ###########
@@ -199,7 +205,7 @@ boxplot(FL016_ndvi ~ treatment,
 Palette <- c("darkred","red","orange","yellow","lightgreen","green","blue",
                 "lightblue","purple", "pink","brown","black")
 
-Palette2 <-c("red", "orange", "yellow", "green") 
+Palette2 <-c("red", "orange", "yellow", "green")  
 
 ggplot(data = pt_int2, aes(x ="" , y = FL016_ndvi, color = factor(""))) +
   geom_boxplot() +       
@@ -233,5 +239,30 @@ ggplot(data = pt_int2, aes(x = "", y = FL016_ndvi, color = factor(treatment))) +
         axis.text.y = element_text(size = 10, color = "black"),
         panel.background = element_blank(), 
         axis.line = element_line(colour = "black")) + guides(color=guide_legend(override.aes=list(fill=NA), title = "Transect ID"))
+
+
+
+
+####### extracting all values from each plots (distribution of values) ######
+plot_locations <- st_as_sf(GPS_all, coords = c("longitude.x", "latitude.x"), crs = "+proj=aea +lat_1=50 +lat_2=70 +lat_0=56 +lon_0=100 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0")
+st_crs(plot_locations)
+
+ggplot() +
+  geom_sf(data = plot_locations) +
+  ggtitle("Map of Plot Locations")
+
+
+st_write(plot_locations,
+         "plot_locations.shp", driver = "ESRI Shapefile")
+
+points<-shapefile("plot_locations.shp")
+
+ndvi_FL016_all <- extract(FL016, points,
+                      buffer = 0.25)
+ndvi_FL016_all
+ndvi_FL016_all <- as.data.frame(ndvi_FL016_all)
+
+
+
 
 
