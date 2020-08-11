@@ -244,6 +244,8 @@ ggplot(data = pt_int2, aes(x = "", y = FL016_ndvi, color = factor(treatment))) +
 
 
 ####### extracting all values from each plots (distribution of values) ######
+## have to convert plot coordinates to shp file!
+
 plot_locations <- st_as_sf(GPS_all, coords = c("longitude.x", "latitude.x"), crs = "+proj=aea +lat_1=50 +lat_2=70 +lat_0=56 +lon_0=100 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0")
 st_crs(plot_locations)
 
@@ -258,10 +260,88 @@ st_write(plot_locations,
 points<-shapefile("plot_locations.shp")
 
 ndvi_FL016_all <- extract(FL016, points,
-                      buffer = 0.25)
+                      buffer = 0.25, 
+                      small = TRUE,
+                      df = TRUE, 
+                      factor = TRUE)
 ndvi_FL016_all
-ndvi_FL016_all <- as.data.frame(ndvi_FL016_all)
+ndvi_FL016_all <- as.data.frame(ndvi_FL016_all) #### Error in (function (..., row.names = NULL, check.rows = FALSE, check.names = TRUE,  : 
+                                                #### arguments imply differing number of rows: 121, 122, 120, 123, 119, 124, 118
+  
+all <- merge(ndvi_FL016_all, ndvi_plots, by = "ID")
+all <- subset(all, select= -c(longitude.y, latitude.y, elevation, FL016_ndvi, FL020_ndvi))
 
+
+
+## subset by plot to get range for each plot
+P100 <- subset(all, plot == "P100")
+P101 <- subset(all, plot == "P101")
+P102 <- subset(all, plot == "P102")
+P103 <- subset(all, plot == "P103")
+P104 <- subset(all, plot == "P104")
+P105 <- subset(all, plot == "P105")
+P106 <- subset(all, plot == "P106")
+P107 <- subset(all, plot == "P107")
+P108 <- subset(all, plot == "P108")
+P109 <- subset(all, plot == "P109")
+P110 <- subset(all, plot == "P110")
+P112 <- subset(all, plot == "P112")
+P113 <- subset(all, plot == "P113")
+P114 <- subset(all, plot == "P114")
+P115 <- subset(all, plot == "P115")
+P116 <- subset(all, plot == "P116")
+P117 <- subset(all, plot == "P117")
+P118 <- subset(all, plot == "P118")
+P121 <- subset(all, plot == "P121")
+P123 <- subset(all, plot == "P123")
+P125 <- subset(all, plot == "P125")
+P128 <- subset(all, plot == "P128")
+P129 <- subset(all, plot == "P129")
+P130 <- subset(all, plot == "P130")
+P134 <- subset(all, plot == "P134")
+P135 <- subset(all, plot == "P135")
+P136 <- subset(all, plot == "P136")
+P138 <- subset(all, plot == "P138")
+P139 <- subset(all, plot == "P139")
+
+
+## for loop???? for subsetting....
+
+for (plot in c(P100, P101, P102, P103)){
+  subset(paste("The year is", year))
+}
+
+
+
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
+hist(P100$FL016)
 
 
 
