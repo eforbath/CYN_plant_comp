@@ -289,71 +289,21 @@ all_sub <- subset(all, select= -c(longitude.x, latitude.x, ID))
 write.csv(all_sub, "ndvi_dist.csv", row.names = FALSE)
 
 new <- read.csv("ndvi_dist_edit.csv") ## created new data frame bc I didn't know how to do it in r
-
-library(purrr)
-library(reshape2)
-
-
-plots <-
-  all_sub %>%
-  group_by(all_sub$plot) %>%
-  map(~ ggplot() + geom_histogram(aes(plot)))
-plots
-
+names(new)
 
 
 for (i in 1:length(new)) { # Loop over loop.vector
   x <- new[,i]
   # Plot histogram of x
   hist(x,
-       main = paste("NDVI distribution for", i),
-       xlab = "NDVI")
+       main = paste("NDVI distribution for", names((new)[i])),
+       xlab = "NDVI",
+       xlim = c(0.2, 0.8),
+       ylim = c(1, 60))
 }
 
+names(new)
 
-
-
-
-par(mfrow=c(2,1))
-plots <- for(plot in names(all_sub))
-{
-  split(all_sub, all_sub$plot)
-  hist(all_sub[,plot], 
-  100, col="lightblue", xlab=plot, main=paste0("Histogram of ",plot)) # subset with [] not $)
-}
-dev.off()
-
-
-
-hist(P100$FL016)
-hist(P101$FL016)
-hist(P102$FL016)
-hist(P103$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
 
 
 
