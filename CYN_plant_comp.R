@@ -286,12 +286,11 @@ list2env(sub, envir= .GlobalEnv) ##separate into dataframes
 
 
 all_sub <- subset(all, select= -c(longitude.x, latitude.x, ID))
+write.csv(all_sub, "ndvi_dist.csv", row.names = FALSE)
+
+new <- read.csv("ndvi_dist_edit.csv") ## created new data frame bc I didn't know how to do it in r
 
 library(purrr)
-library(ggplot2)
-library(dplyr)
-
-library(ggplot2)
 library(reshape2)
 
 
@@ -301,6 +300,20 @@ plots <-
   map(~ ggplot() + geom_histogram(aes(plot)))
 plots
 
+
+
+for (i in 1:length(new)) { # Loop over loop.vector
+  x <- new[,i]
+  # Plot histogram of x
+  hist(x,
+       main = paste("NDVI distribution for", i),
+       xlab = "NDVI")
+}
+
+
+
+
+
 par(mfrow=c(2,1))
 plots <- for(plot in names(all_sub))
 {
@@ -309,6 +322,8 @@ plots <- for(plot in names(all_sub))
   100, col="lightblue", xlab=plot, main=paste0("Histogram of ",plot)) # subset with [] not $)
 }
 dev.off()
+
+
 
 hist(P100$FL016)
 hist(P101$FL016)
