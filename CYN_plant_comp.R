@@ -293,25 +293,27 @@ library(dplyr)
 
 library(ggplot2)
 library(reshape2)
-ggplot(melt(all_sub),aes(x=ndvi)) + geom_histogram() + facet_wrap(~plot)
 
 
 plots <-
   all_sub %>%
-  group_by(.$plot) %>%
-  map(~ ggplot(.) + geom_histogram(aes(plot)))
+  group_by(all_sub$plot) %>%
+  map(~ ggplot() + geom_histogram(aes(plot)))
+plots
 
-
+par(mfrow=c(2,1))
 plots <- for(plot in names(all_sub))
 {
+  split(all_sub, all_sub$plot)
   hist(all_sub[,plot], 
   100, col="lightblue", xlab=plot, main=paste0("Histogram of ",plot)) # subset with [] not $)
 }
+dev.off()
 
 hist(P100$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
-hist(P100$FL016)
+hist(P101$FL016)
+hist(P102$FL016)
+hist(P103$FL016)
 hist(P100$FL016)
 hist(P100$FL016)
 hist(P100$FL016)
