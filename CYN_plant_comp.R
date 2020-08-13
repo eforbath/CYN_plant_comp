@@ -244,7 +244,9 @@ ggplot(data = pt_int2, aes(x = "", y = FL016_ndvi, color = factor(treatment))) +
 
 
 ####### extracting all values from each plots (distribution of values) ######
+
 ## have to convert plot coordinates to shp file!
+
 library(sf)
 plot_locations <- st_as_sf(GPS_all, coords = c("longitude.x", "latitude.x"), crs = "+proj=aea +lat_1=50 +lat_2=70 +lat_0=56 +lon_0=100 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs +ellps=WGS84 +towgs84=0,0,0")
 st_crs(plot_locations)
@@ -260,7 +262,7 @@ st_write(plot_locations,
 points<-shapefile("plot_locations.shp")
 
 
-detach("package:tidyr", unload = TRUE)
+detach("package:tidyr", unload = TRUE) # extract wont ork with tidyr
 
 ndvi_FL016_all <- extract(FL016, points,
                       buffer = 0.5, 
@@ -287,7 +289,10 @@ write.csv(all_sub, "ndvi_dist.csv", row.names = FALSE)
 new <- read.csv("ndvi_dist_edit.csv") ## created new data frame bc I didn't know how to do it in r
 names(new)
 
+
+rnorm_plots <- as.numeric()
 sd_plots <- as.numeric()
+
 for (i in 1:length(new)) { # for every column in the "new" data frame
   x <- new[,i] # identifying columns (?)
   # Plot histogram of x
@@ -298,9 +303,10 @@ for (i in 1:length(new)) { # for every column in the "new" data frame
        xlim = c(0.2, 0.8),
        ylim = c(1, 60))
   dev.off()
-  sd_plots[i] <- rnorm(1:length(x))
+  rnorm_plots[i] <- rnorm(1:length(x)) ## dont know if this is right 
+  sd_plots[i] <- sd(rnorm_plots)
 }
-## standard deviation!!!
+
 sd_plots
 
 .rs.restartR() ### too many graphs created; needed to restart r
