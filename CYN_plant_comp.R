@@ -276,11 +276,8 @@ all <- subset(all, select= -c(longitude.y, latitude.y, elevation, FL016_ndvi, FL
 all$plot = gsub("P", "", all$plot)
 
 
-## subset by plot to get range for each plot
+## for loop to create histogram of NDVI values for each plot 
 
-## for loop???? for subsetting....
-
-install.packages("list2env")
 sub <- split(all, all$plot) ## split data by plot
 list2env(sub, envir= .GlobalEnv) ##separate into dataframes 
 
@@ -292,17 +289,16 @@ new <- read.csv("ndvi_dist_edit.csv") ## created new data frame bc I didn't know
 names(new)
 
 
-for (i in 1:length(new)) { # Loop over loop.vector
-  x <- new[,i]
+for (i in 1:length(new)) { # for every column in the "new" data frame
+  x <- new[,i] # identifying columns (?)
   # Plot histogram of x
   hist(x,
-       main = paste("NDVI distribution for", names((new)[i])),
+       main = paste("NDVI distribution for", names((new)[i])), #paste name of column to the end of title
        xlab = "NDVI",
        xlim = c(0.2, 0.8),
        ylim = c(1, 60))
 }
 
-names(new)
 
 
 
