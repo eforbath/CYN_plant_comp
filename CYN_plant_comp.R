@@ -263,14 +263,13 @@ points<-shapefile("plot_locations.shp")
 detach("package:tidyr", unload = TRUE)
 
 ndvi_FL016_all <- extract(FL016, points,
-                      buffer = 0.25, 
+                      buffer = 0.5, 
                       small = TRUE,
                       df = TRUE, 
                       factor = TRUE)
 ndvi_FL016_all
-ndvi_FL016_all <- as.data.frame(ndvi_FL016_all) #### Error in (function (..., row.names = NULL, check.rows = FALSE, check.names = TRUE,  : 
-                                                #### arguments imply differing number of rows: 121, 122, 120, 123, 119, 124, 118
-  
+ndvi_FL016_all <- as.data.frame(ndvi_FL016_all) 
+
 all <- merge(ndvi_FL016_all, ndvi_plots, by = "ID")
 all <- subset(all, select= -c(longitude.y, latitude.y, elevation, FL016_ndvi, FL020_ndvi))
 all$plot = gsub("P", "", all$plot)
@@ -292,15 +291,54 @@ names(new)
 for (i in 1:length(new)) { # for every column in the "new" data frame
   x <- new[,i] # identifying columns (?)
   # Plot histogram of x
+  jpeg(file = paste("dist", names((new)[i]), ".jpeg", sep = ""))
   hist(x,
-       main = paste("NDVI distribution for", names((new)[i])), #paste name of column to the end of title
+       main = paste("NDVI distribution for", names((new)[i])), #paste name of column to the 
        xlab = "NDVI",
        xlim = c(0.2, 0.8),
        ylim = c(1, 60))
+  dev.off()
 }
 
+.rs.restartR()
+
+###### REPEAT for FL020 ######
+ndvi_FL020_all <- extract(FL020, points,
+                          buffer = 0.5, 
+                          small = TRUE,
+                          df = TRUE, 
+                          factor = TRUE)
+ndvi_FL020_all
+ndvi_FL020_all <- as.data.frame(ndvi_FL020_all) 
+
+all <- merge(ndvi_FL020_all, ndvi_plots, by = "ID")
+all <- subset(all, select= -c(longitude.y, latitude.y, elevation, FL016_ndvi, FL020_ndvi))
+all$plot = gsub("P", "", all$plot)
 
 
+## for loop to create histogram of NDVI values for each plot 
 
+sub <- split(all, all$plot) ## split data by plot
+list2env(sub, envir= .GlobalEnv) ##separate into dataframes 
+
+
+all_sub <- subset(all, select= -c(longitude.x, latitude.x, ID))
+write.csv(all_sub, "ndvi_dist_post.csv", row.names = FALSE)
+
+new <- read.csv("ndvi_dist_post_edit.csv") ## created new data frame bc I didn't know how to do it in r
+names(new)
+
+
+for (i in 1:length(new)) { # for every column in the "new" data frame
+  y <- new[,i] # identifying columns (?)
+  # Plot histogram of x
+  jpeg(file = paste("FL020dist", names((new)[i]), ".jpeg", sep = ""))
+  hist(y,
+       main = paste("FL020 DVI distribution for", names((new)[i])), #paste name of column to the 
+       xlab = "NDVI",
+       xlim = c(0.2, 1),
+       ylim = c(1, 150))
+  dev.off()
+}
 
 
