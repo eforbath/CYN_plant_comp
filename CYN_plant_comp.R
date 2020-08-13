@@ -287,7 +287,7 @@ write.csv(all_sub, "ndvi_dist.csv", row.names = FALSE)
 new <- read.csv("ndvi_dist_edit.csv") ## created new data frame bc I didn't know how to do it in r
 names(new)
 
-
+sd_plots <- as.numeric()
 for (i in 1:length(new)) { # for every column in the "new" data frame
   x <- new[,i] # identifying columns (?)
   # Plot histogram of x
@@ -298,9 +298,12 @@ for (i in 1:length(new)) { # for every column in the "new" data frame
        xlim = c(0.2, 0.8),
        ylim = c(1, 60))
   dev.off()
+  sd_plots[i] <- rnorm(1:length(x))
 }
+## standard deviation!!!
+sd_plots
 
-.rs.restartR()
+.rs.restartR() ### too many graphs created; needed to restart r
 
 ###### REPEAT for FL020 ######
 ndvi_FL020_all <- extract(FL020, points,
@@ -336,9 +339,16 @@ for (i in 1:length(new)) { # for every column in the "new" data frame
   hist(y,
        main = paste("FL020 DVI distribution for", names((new)[i])), #paste name of column to the 
        xlab = "NDVI",
-       xlim = c(0.2, 1),
+       xlim = c(0.2, 0.8),
        ylim = c(1, 150))
   dev.off()
 }
+
+
+
+
+
+
+
 
 
