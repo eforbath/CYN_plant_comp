@@ -290,9 +290,6 @@ new <- read.csv("ndvi_dist_edit.csv") ## created new data frame bc I didn't know
 names(new)
 
 
-rnorm_plots <- as.numeric()
-sd_plots <- as.numeric()
-
 for (i in 1:length(new)) { # for every column in the "new" data frame
   x <- new[,i] # identifying columns (?)
   # Plot histogram of x
@@ -303,11 +300,13 @@ for (i in 1:length(new)) { # for every column in the "new" data frame
        xlim = c(0.2, 0.8),
        ylim = c(1, 60))
   dev.off()
-  rnorm_plots[i] <- rnorm(1:length(x)) ## dont know if this is right 
-  sd_plots[i] <- sd(rnorm_plots)
 }
 
-sd_plots
+
+new  %>%
+  summarise_all(sd, na.rm = TRUE)
+
+
 
 .rs.restartR() ### too many graphs created; needed to restart r
 
