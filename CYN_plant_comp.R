@@ -279,7 +279,7 @@ all$plot = gsub("P", "", all$plot)
 
 ## for loop to create histogram of NDVI values for each plot 
 
-sub <- split(all, all$plot) ## split data by plot
+sub <- split(all, all$plot) ## split data by plot (don't need this!!)
 list2env(sub, envir= .GlobalEnv) ##separate into dataframes 
 
 
@@ -310,6 +310,11 @@ new  %>%
 
 .rs.restartR() ### too many graphs created; needed to restart r
 
+
+
+
+
+
 ###### REPEAT for FL020 ######
 ndvi_FL020_all <- extract(FL020, points,
                           buffer = 0.5, 
@@ -326,14 +331,14 @@ all$plot = gsub("P", "", all$plot)
 
 ## for loop to create histogram of NDVI values for each plot 
 
-sub <- split(all, all$plot) ## split data by plot
+sub <- split(all, all$plot) ## split data by plot (don't need this??)
 list2env(sub, envir= .GlobalEnv) ##separate into dataframes 
 
 
 all_sub <- subset(all, select= -c(longitude.x, latitude.x, ID))
 write.csv(all_sub, "ndvi_dist_post.csv", row.names = FALSE)
 
-new <- read.csv("ndvi_dist_post_edit.csv") ## created new data frame bc I didn't know how to do it in r
+new2 <- read.csv("ndvi_dist_post_edit.csv") ## created new data frame bc I didn't know how to do it in r
 names(new)
 
 
@@ -349,11 +354,8 @@ for (i in 1:length(new)) { # for every column in the "new" data frame
   dev.off()
 }
 
-
-
-
-
-
+new2  %>%
+  summarise_all(sd, na.rm = TRUE)
 
 
 
