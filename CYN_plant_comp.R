@@ -302,12 +302,12 @@ for (i in 1:length(new)) { # for every column in the "new" data frame
   dev.off()
 }
 
-
+## standard deviation for all plots?
 FL016 = new  %>%
   summarise_all(sd, na.rm = TRUE)
 
 boxplot(new, 
-        main = "NDVI Distributions for All Plots",
+        main = "FL016 NDVI Distributions for All Plots",
         xlab = "Plot", 
         ylab = "NDVI", 
         las = 2)
@@ -361,6 +361,7 @@ for (i in 1:length(new)) { # for every column in the "new" data frame
   dev.off()
 }
 
+## standard deviation for all plots?
 FL020 = new2  %>%
   summarise_all(sd, na.rm = TRUE)
 
@@ -369,8 +370,8 @@ FL016
 FL020
 
 
-boxplot(new2, 
-        main = "NDVI Distributions for All Plots",
+boxplot(new2,
+        main = "FL020 NDVI Distributions for All Plots",
         xlab = "Plot", 
         ylab = "NDVI", 
         las = 2)
