@@ -354,7 +354,7 @@ for (i in 1:length(new)) { # for every column in the "new" data frame
   # Plot histogram of x
   jpeg(file = paste("FL020dist", names((new)[i]), ".jpeg", sep = ""))
   hist(y,
-       main = paste("FL020 DVI distribution for", names((new)[i])), #paste name of column to the 
+       main = paste("FL020 NDVI distribution for", names((new)[i])), #paste name of column to the 
        xlab = "NDVI",
        xlim = c(0.2, 0.8),
        ylim = c(1, 150))
@@ -377,6 +377,10 @@ boxplot(new2,
         las = 2)
 
 
+##### Analyses #####
+lm <- lm(FL016_ndvi ~ treatment, data = ndvi)
+summary(lm)
 
-
-
+ndvi$ndvi_diff <- (ndvi$FL020_ndvi - ndvi$FL016_ndvi)
+lm <- lm(ndvi_diff ~ treatment, data = ndvi)
+summary(lm)
