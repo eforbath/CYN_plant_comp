@@ -37,9 +37,11 @@ library(DHARMa)
 ########## Extracted NDVI Values #########
 ##reading rasters (created in CYN_NDVI)
 FL016 <- raster("CYN_TR1_FL016M/FL016.tif")  
+writeRaster(FL016, "FL016.tif")
 FL016
 
 FL020 <- raster("CYN_TR1_FL020M/FL020.tif")
+writeRaster(FL020, "FL020.tif")
 FL020
 
 
@@ -381,6 +383,14 @@ boxplot(new2,
 lm <- lm(FL016_ndvi ~ treatment, data = ndvi)
 summary(lm)
 
+lm <- lm(FL020_ndvi ~ treatment, data = ndvi)
+summary(lm)
+
 ndvi$ndvi_diff <- (ndvi$FL020_ndvi - ndvi$FL016_ndvi)
 lm <- lm(ndvi_diff ~ treatment, data = ndvi)
 summary(lm)
+
+
+
+
+
