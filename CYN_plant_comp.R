@@ -406,3 +406,35 @@ ggplot() +
   ggtitle("Plot Boundaries") + 
   coord_sf()
 
+
+## extrat ndvi by feature class
+
+extract <- extract(FL016, plots_feature,
+                   small = TRUE,
+                   df = TRUE, 
+                   factor = TRUE)
+names(ndvi_FL016)[names(ndvi_FL016) == "FL016"] <- "FL016_ndvi"
+extract <- as.data.frame(extract)
+
+
+extract2 <- extract(FL020, plots_feature,
+                   small = TRUE,
+                   df = TRUE, 
+                   factor = TRUE)
+names(ndvi_FL020)[names(ndvi_FL020) == "FL020"] <- "FL020_ndvi"
+extract2 <- as.data.frame(extract2)
+
+
+as.data.frame(plots_feature)
+plots_feature$ID <- c(1:23)
+
+all_new <- merge(extract, plots_feature, by = "ID")
+
+
+
+
+
+
+
+
+
