@@ -391,6 +391,18 @@ lm <- lm(ndvi_diff ~ treatment, data = ndvi)
 summary(lm)
 
 
+#####READ IN SHP FILE OF FEATURE CLASS OF PLOTS ####
+library(sf)
+
+plots_feature <- st_read("plots_feature2/plots_feature2.shp")
 
 
+st_geometry_type(plots_feature)
+
+plots_feature
+
+ggplot() + 
+  geom_sf(data = plots_feature, size = 3, color = "black", fill = "cyan1") + 
+  ggtitle("Plot Boundaries") + 
+  coord_sf()
 
