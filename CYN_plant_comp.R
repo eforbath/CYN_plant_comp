@@ -431,9 +431,16 @@ plots_feature$ID <- c(1:23)
 all_new <- merge(extract, plots_feature, by = "ID")
 
 
+boxplot(FL016 ~ plot_num, data = all_new)
 
 
 
+#### merge with treatment and percent cover 
+
+names(all_new)[names(all_new) == "plot_num"] <- "plot"
+all <- merge(all_new, pt_int, by = "plot")
+
+all <- merge(treatments, all, by = "plot")
 
 
 
